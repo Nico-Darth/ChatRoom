@@ -7,11 +7,13 @@
         body {
             font-family: Arial, sans-serif;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
-            height: 100vh;
+            justify-content: center;
+            min-height: 100vh;
             margin: 0;
             background-color: #f0f2f5;
+            overflow-x: hidden;
         }
         .container {
             background: white;
@@ -117,9 +119,41 @@
         .forgot-password:hover {
             text-decoration: underline;
         }
+        .banner-container {
+            width: 100vw;
+            height: 150px;
+            overflow: hidden;
+            position: relative;
+            background: #1877f2;
+            margin-bottom: 20px;
+        }
+        .photo-banner {
+            display: flex;
+            animation: slide 60s linear infinite;
+            height: 100%;
+        }
+        .banner-photo {
+            height: 150px;
+            min-width: 200px;
+            object-fit: cover;
+            margin-right: 2px;
+        }
+        @keyframes slide {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
     </style>
 </head>
 <body>
+    <div class="banner-container">
+        <div class="photo-banner" id="photoBanner">
+            <!-- Foto's worden hier dynamisch toegevoegd -->
+        </div>
+    </div>
     <div class="container">
         <div id="messageContainer" class="message"></div>
         <div id="loginForm">
@@ -338,6 +372,41 @@
                     }
                 });
         }
+
+        async function loadBannerPhotos() {
+            try {
+                const response = await fetch('https://api.thecatapi.com/v1/images/search?limit=15', {
+                    headers: {
+                        'x-api-key': 'live_f1NU151eg3nwl52RTLJOPSdycx0Dgpzpun9YIw197tPdL8RIce6cWaUQz2EZXehA'
+                    }
+                });
+                const data = await response.json();
+                
+                const banner = document.getElementById('photoBanner');
+                
+                // Voeg foto's twee keer toe voor naadloze loop
+                data.forEach(photo => {
+                    const img = document.createElement('img');
+                    img.src = photo.url;
+                    img.className = 'banner-photo';
+                    img.alt = 'Cat photo';
+                    banner.appendChild(img);
+                });
+                
+                // Dupliceer de foto's voor naadloze loop
+                data.forEach(photo => {
+                    const img = document.createElement('img');
+                    img.src = photo.url;
+                    img.className = 'banner-photo';
+                    img.alt = 'Cat photo';
+                    banner.appendChild(img);
+                });
+            } catch (error) {
+                console.error('Error loading banner photos:', error);
+            }
+        }
+
+        loadBannerPhotos();
     </script>
 </body>
 </html> 
